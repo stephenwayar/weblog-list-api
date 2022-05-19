@@ -11,7 +11,6 @@ const totalLikes = (blogs) => {
 const favoriteBlog = (blogs) => {
   const likes = blogs.map(blog => blog.likes)
   const max = Math.max(...likes)
-
   const obj = blogs.find(blog => blog.likes === max )
 
   return {
