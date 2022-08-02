@@ -4,6 +4,7 @@ const api = supertest(app)
 const dummy = require('../helpers/blog_helper').dummy
 const totalLikes = require('../helpers/blog_helper').totalLikes
 const favoriteBlog = require('../helpers/blog_helper').favoriteBlog
+const Blog = require('../models/Blog')
 
 const blogs = [
   {
@@ -87,5 +88,50 @@ describe('Blog requests', () => {
     await api
       .get('/api/blogs')
       .expect(200)
+  }, 50000)
+
+  test('creates new blog post', async () => {
+    const newBlog = {
+      title: "Jest config",
+      author: "Mike Brody",
+      url: "facebook.com",
+      likes: 34
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(200)
+  }, 50000)
+
+  test('confirms db identifyer is id', async () => {
+    const request = await api.get('/api/blogs')
+    expect(request.body[0].id).toBeDefined()
+  }, 50000)
+
+  test('confirms that if likes property is missing, it defaults to 0', async () => {
+    const newBlog = {
+      title: "Mongoose config",
+      author: "Jack Man",
+      url: "facebook.com",
+    }
+
+    const request = await api
+      .post('/api/blogs')
+      .send(newBlog)
+
+    expect(request.body.likes).toBe(0)
+  }, 50000)
+
+  test.only('verifies that the title and url properties are present', async () => {
+    const newBlog = {
+      author: "Jack Man",
+    }
+
+    const request = await api
+      .post('/api/blogs')
+      .send(newBlog)
+
+    expect(400)
   }, 50000)
 })
