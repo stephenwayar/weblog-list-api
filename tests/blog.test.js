@@ -1,3 +1,6 @@
+const supertest = require('supertest')
+const app = require('../app')
+const api = supertest(app)
 const dummy = require('../helpers/blog_helper').dummy
 const totalLikes = require('../helpers/blog_helper').totalLikes
 const favoriteBlog = require('../helpers/blog_helper').favoriteBlog
@@ -77,4 +80,12 @@ describe('Favourite blog', () => {
       likes: 12
     })
   })
+})
+
+describe('Blog requests', () => {
+  test('get all blog posts', async () => {
+    await api
+      .get('/api/blogs')
+      .expect(200)
+  }, 50000)
 })

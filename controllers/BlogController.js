@@ -1,12 +1,15 @@
 const Blog = require('../models/Blog')
 
-exports.get_blogs = (req, res, next) => {
-  Blog.find({}).then(blogs => {
-    res.json(blogs)
-  }).catch(error => next(error))
+exports.get_blogs = async (req, res, next) => {
+  try{
+    const request = await Blog.find({})
+    res.json(request)
+  }catch(error){
+    next(error)
+  }
 }
 
-exports.create_blog = (req, res, next) => {
+exports.create_blog = async (req, res, next) => {
   let body = req.body
 
   const blog = new Blog({
@@ -16,7 +19,10 @@ exports.create_blog = (req, res, next) => {
     likes: body.likes
   })
 
-  blog.save().then(newBlog => {
+  try{
+    const newBlog = await blog.save()
     res.json(newBlog)
-  }).catch(error => next(error))
+  }catch(error){
+    next(error)
+  }
 }
