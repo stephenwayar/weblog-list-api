@@ -4,7 +4,6 @@ const api = supertest(app)
 const dummy = require('../helpers/blog_helper').dummy
 const totalLikes = require('../helpers/blog_helper').totalLikes
 const favoriteBlog = require('../helpers/blog_helper').favoriteBlog
-const Blog = require('../models/Blog')
 
 const blogs = [
   {
@@ -123,7 +122,7 @@ describe('Blog requests', () => {
     expect(request.body.likes).toBe(0)
   }, 50000)
 
-  test.only('verifies that the title and url properties are present', async () => {
+  test('verifies that the title and url properties are present', async () => {
     const newBlog = {
       author: "Jack Man",
     }
@@ -133,5 +132,23 @@ describe('Blog requests', () => {
       .send(newBlog)
 
     expect(400)
+  }, 50000)
+
+  test('deleting a blog', async () => {
+    await api
+      .delete('/api/blogs/62e8e27dadd1d224191dbfd4')
+      .expect(200)
+  })
+
+  test.only('updating a blog', async () => {
+    const blog = {
+      title: "JWT Auth",
+      author: "Steve",
+      likes: 33
+    }
+    await api
+      .put('/api/blogs/62e8e6c5ac172a79e0c2962b')
+      .send(blog)
+      .expect(200)
   }, 50000)
 })
