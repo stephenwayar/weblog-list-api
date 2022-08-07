@@ -9,6 +9,7 @@ require("./database/mongodb")
 const indexRouter = require('./routes/index')
 const blogRouter = require('./routes/blog')
 const authRouter = require('./routes/auth')
+const userRouter = require('./routes/user')
 const middleware = require('./utils/middleware')
 
 app.use(cors())
@@ -18,6 +19,7 @@ app.use(morgan('tiny'))
 
 app.use(indexRouter)
 app.use(authRouter)
+app.use(userRouter)
 app.use(blogRouter)
 
 app.use(middleware.unknownEndpoint)

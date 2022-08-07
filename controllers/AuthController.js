@@ -39,3 +39,6 @@ exports.register_user = async (req, res) => {
     })
   })
 }
+
+exports.login_user = async (req, res) => {
+}
