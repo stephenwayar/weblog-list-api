@@ -1,8 +1,9 @@
 const Blog = require('../models/Blog')
+const User = require('../models/User')
 
 exports.get_blogs = async (req, res, next) => {
   try{
-    const request = await Blog.find({})
+    const request = await Blog.find({}).populate('user')
     res.json(request)
   }catch(error){
     next(error)
@@ -10,9 +11,12 @@ exports.get_blogs = async (req, res, next) => {
 }
 
 exports.create_blog = async (req, res, next) => {
-  let body = req.body
+  const body = req.body
+
+  const user = await User.findById('62efff82e961f6258c8151f2')
 
   const blog = new Blog({
+    user: user._id,
     title: body.title,
     author: body.author,
     url: body.url,
@@ -21,6 +25,8 @@ exports.create_blog = async (req, res, next) => {
 
   try{
     const newBlog = await blog.save()
+    user.blogs = user.blogs.concat(newBlog._id)
+    await user.save()
     res.json(newBlog)
   }catch(error){
     next(error)

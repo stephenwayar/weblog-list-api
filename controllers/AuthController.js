@@ -2,10 +2,24 @@ const bcrypt = require('bcryptjs')
 const User = require('../models/User')
 const Blog = require('../models/Blog')
 
-exports.register_user = async (req, res) => {
+exports.register_user = async (req, res, next) => {
   const { username, name, password } = req.body
 
   const user = await User.findOne({ username: username })
+
+  if(!(username && password)){
+    return res.status(400).json({
+      success: false,
+      message: "Username and password is required"
+    })
+  }
+
+  if(!password.length < 3){
+    return res.status(400).json({
+      success: false,
+      message: "Password must be more than 3 char"
+    })
+  }
 
   if(user){
     return res.status(400).json({
@@ -30,12 +44,7 @@ exports.register_user = async (req, res) => {
         const savedUser = await newUser.save()
 
         res.status(201).json(savedUser)
-      } catch(error){
-        res.status(400).json({
-          success: false,
-          message: "Failed to save user"
-        })
-      }
+      } catch(error) {next(error)}
     })
   })
 }
