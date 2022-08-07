@@ -10,7 +10,7 @@ const indexRouter = require('./routes/index')
 const blogRouter = require('./routes/blog')
 const authRouter = require('./routes/auth')
 const userRouter = require('./routes/user')
-const middleware = require('./utils/middleware')
+const middleware = require('./middlewares/error')
 
 app.use(cors())
 app.use(express.json())
