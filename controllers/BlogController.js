@@ -1,5 +1,7 @@
 const Blog = require('../models/Blog')
 const User = require('../models/User')
+const jwt = require('jsonwebtoken')
+const logger = require('../utils/logger')
 
 exports.get_blogs = async (req, res, next) => {
   try{
@@ -13,7 +15,23 @@ exports.get_blogs = async (req, res, next) => {
 exports.create_blog = async (req, res, next) => {
   const body = req.body
 
-  const user = await User.findById('62efff82e961f6258c8151f2')
+  if(!req.token){
+    logger.info('token is missing')
+    return res.status(401).json({
+      error: 'token missing or invalid'
+    })
+  }
+
+  const decodedToken = jwt.verify(req.token, process.env.SECRET)
+
+  if (!decodedToken.id) {
+    logger.info('token present but invalid')
+    return res.status(401).json({
+      error: 'token missing or invalid'
+    })
+  }
+
+  const user = await User.findById(decodedToken.id)
 
   const blog = new Blog({
     user: user._id,
@@ -36,9 +54,33 @@ exports.create_blog = async (req, res, next) => {
 exports.delete_blog = async (req, res) => {
   let ID = req.params.id
 
+  if(!req.token){
+    logger.info('token is missing')
+    return res.status(401).json({
+      error: 'token missing or invalid'
+    })
+  }
+
+  const decodedToken = jwt.verify(req.token, process.env.SECRET)
+
+  if (!decodedToken.id) {
+    logger.info('token present but invalid')
+    return res.status(401).json({
+      error: 'token missing or invalid'
+    })
+  }
+
+  const blogToDelete = await Blog.findById(ID)
+
+  if(decodedToken.id !== blogToDelete.user.toString()){
+    return res.status(401).json({
+      success: false,
+      message: "Unauthorised delete request"
+    })
+  }
+
   try{
     const deleteRequest = await Blog.findByIdAndDelete(ID)
-
     if(deleteRequest){
       res.status(200).json({
         success: true,
