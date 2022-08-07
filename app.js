@@ -5,9 +5,10 @@ const app = express()
 const cors = require('cors')
 const morgan = require('morgan')
 
-const DB = require("./database/mongodb")
+require("./database/mongodb")
 const indexRouter = require('./routes/index')
 const blogRouter = require('./routes/blog')
+const authRouter = require('./routes/auth')
 const middleware = require('./utils/middleware')
 
 app.use(cors())
@@ -16,6 +17,7 @@ app.use(express.static('build'))
 app.use(morgan('tiny'))
 
 app.use(indexRouter)
+app.use(authRouter)
 app.use(blogRouter)
 
 app.use(middleware.unknownEndpoint)
