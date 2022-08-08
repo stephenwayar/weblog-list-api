@@ -15,23 +15,7 @@ exports.get_blogs = async (req, res, next) => {
 exports.create_blog = async (req, res, next) => {
   const body = req.body
 
-  if(!req.token){
-    logger.info('token is missing')
-    return res.status(401).json({
-      error: 'token missing or invalid'
-    })
-  }
-
-  const decodedToken = jwt.verify(req.token, process.env.SECRET)
-
-  if (!decodedToken.id) {
-    logger.info('token present but invalid')
-    return res.status(401).json({
-      error: 'token missing or invalid'
-    })
-  }
-
-  const user = await User.findById(decodedToken.id)
+  const user = await User.findById(req.user.id)
 
   const blog = new Blog({
     user: user._id,
@@ -54,25 +38,9 @@ exports.create_blog = async (req, res, next) => {
 exports.delete_blog = async (req, res) => {
   let ID = req.params.id
 
-  if(!req.token){
-    logger.info('token is missing')
-    return res.status(401).json({
-      error: 'token missing or invalid'
-    })
-  }
-
-  const decodedToken = jwt.verify(req.token, process.env.SECRET)
-
-  if (!decodedToken.id) {
-    logger.info('token present but invalid')
-    return res.status(401).json({
-      error: 'token missing or invalid'
-    })
-  }
-
   const blogToDelete = await Blog.findById(ID)
 
-  if(decodedToken.id !== blogToDelete.user.toString()){
+  if(req.user.id !== blogToDelete.user.toString()){
     return res.status(401).json({
       success: false,
       message: "Unauthorised delete request"
