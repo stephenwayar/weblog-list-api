@@ -13,6 +13,13 @@ exports.get_blogs = async (req, res, next) => {
 }
 
 exports.create_blog = async (req, res, next) => {
+  if (!request.token) {
+    console.log('token is missing')
+    return response.status(401).json({
+      error: 'token missing or invalid'
+    })
+  }
+
   const body = req.body
 
   const user = await User.findById(req.user.id)
@@ -36,6 +43,13 @@ exports.create_blog = async (req, res, next) => {
 }
 
 exports.delete_blog = async (req, res) => {
+  if (!request.token) {
+    console.log('token is missing')
+    return response.status(401).json({
+      error: 'token missing or invalid'
+    })
+  }
+
   let ID = req.params.id
 
   const blogToDelete = await Blog.findById(ID)
@@ -69,6 +83,13 @@ exports.delete_blog = async (req, res) => {
 }
 
 exports.update_blog = async (req, res, next) => {
+  if (!request.token) {
+    console.log('token is missing')
+    return response.status(401).json({
+      error: 'token missing or invalid'
+    })
+  }
+
   const { title, authorr, url, likes } = req.body
 
   try{

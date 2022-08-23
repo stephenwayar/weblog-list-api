@@ -3,9 +3,7 @@ const jwt = require('jsonwebtoken')
 const userExtractor = (request, response, next) => {
   if (!request.token) {
     console.log('token is missing')
-    return response.status(401).json({
-      error: 'token missing or invalid'
-    })
+    return next()
   }
 
   const decodedToken = jwt.verify(request.token, process.env.SECRET, (err, result) => {
